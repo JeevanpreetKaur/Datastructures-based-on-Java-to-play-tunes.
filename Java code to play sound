@@ -1,0 +1,217 @@
+ package sandbox;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Stack;
+import java.util.concurrent.ThreadLocalRandom;
+
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Synthesizer;
+import javax.sound.midi.MidiChannel;
+
+/**
+ * A little example showing how to play a tune in Java.
+ * 
+ * Inputs are not sanitized or checked, this is just to show how simple it is.
+ * 
+ */
+/** Name : Jeevanpreet  Kaur
+ *  Student Id:  100423652 
+ *  Assignment 1  Info 2315 Data Structure S12
+ *  Play sounds in different order.  
+ *  Instructor: NUkhet Tunchbilek                                     */
+public class playSounds {
+
+	/**
+	 * Constant representing one of the standard Midi "instruments".
+	 */
+	private final static int PIANO = 0, HARPSICHORD = 6, XYLOPHONE = 13, CHURCH_ORGAN = 19, REED_ORGAN = 20,
+			HARMONICA = 22, GUITAR = 24, ELECTRIC_GUITAR = 27, VIOLIN = 40, HARP = 46, TIMPANI = 47, TRUMPET = 56,
+			TROMBONE = 57, OBOE = 68, FLUTE = 73, BANJO = 105, STEEL_DRUMS = 114;
+
+	private static List<String> notes = Arrays.asList("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B");
+	private static MidiChannel[] channels;
+	private static int INSTRUMENT = PIANO;
+	private static int VOLUME = 60; // between 0 and 127
+
+	public static void main(String[] args) {
+
+		try {
+			// * Open a synthesizer
+			Synthesizer synth = MidiSystem.getSynthesizer();
+			synth.open();
+			channels = synth.getChannels();
+			channels[0].programChange(INSTRUMENT);
+			//play("4A",1000);
+			rest(800);
+			
+			// 8 adjacent musical notes
+			List<String> notes1 = Arrays.asList("5C","5D","5E","5F","5G","5A","5B","6C"); 
+
+			// play notes in sequence using the List
+			for (String n : notes1) {
+				play(n, 800);
+				rest(200);
+			}
+			/////////////////
+			
+			Stack<String> noteStack = new Stack<>( );
+			noteStack.push("5C");
+	        noteStack.push("5D");
+	        noteStack.push("5E");
+	        noteStack.push("5F");
+	        noteStack.push("5G");
+	        noteStack.push("5A");
+	        noteStack.push("5B");
+	        noteStack.push("6C");
+	       
+	        
+	        /*while (!noteStack.isEmpty()) {
+	            String note = noteStack.pop();
+	            System.out.println(note);
+	        }*/
+	       
+			// TODO: play notes in reverse order using Stack
+	        
+			 while (!noteStack.isEmpty()) {
+	                String note = noteStack.pop();
+	                
+	                play(note, 1000); 
+	                rest(1000);
+	                
+	            }
+			 
+			/////////////////
+			// TODO: play notes in the same order using Queue
+			 Queue<String> queue = new LinkedList<>(); // Create a LinkedList-based queue
+
+		        // Adding  items to the queue
+		         // Using offer() method
+		        queue.offer("5C"); 
+		        queue.offer("5D");
+		        queue.offer("5E");
+		        queue.offer("5F");
+		        queue.offer("5G");
+		        queue.offer("5A");
+		        queue.offer("5B");
+		        queue.offer("6D");
+		        
+			 while (!queue.isEmpty()) {
+	                String note = queue.poll();
+	                
+	                play(note, 800); 
+	                rest(1000);
+	                
+	            }
+			
+
+			/////////////////
+			// TODO: play notes in mixed order (one from front, one from back) using Deque
+			 
+			 
+			 Deque<String> noteDeque = new LinkedList<>();
+			 noteDeque.offerFirst("5C");
+			 noteDeque.offerFirst("5D");
+			 noteDeque.offerFirst("5E");
+			 noteDeque.offerFirst("5F");
+			 noteDeque.offerFirst("5G");
+			 noteDeque.offerFirst("5A");
+			 noteDeque.offerFirst("5B");
+			 noteDeque.offerFirst("6D");
+			 
+			/*  Code to check whether the nodes actually work 
+			 * while (!noteDeque.isEmpty()) {
+		            // Remove and retrieve the element from the front (left end)
+		            String frontElement = noteDeque.pollLast(); // or removeFirst()
+		            System.out.println("Front element: " + frontElement);
+
+		            // Remove and retrieve the element from the rear (right end)
+		            String lastElement = noteDeque.pollFirst(); // or removeLast()
+		            System.out.println("Last element: " + lastElement);}
+			rest(1000);*/
+
+			
+			while (!noteDeque.isEmpty()) {
+	            // Play note from the front (left end)
+	          
+	            	String note = noteDeque.pollFirst();
+	            	play(note, 800);
+	            	rest(1000);
+	            // Play note from the rear (right end)
+	           
+	            	String note1 = noteDeque.pollLast();
+	            	play(note1, 800);
+	              rest(1000);
+			}
+			/////////////////
+			// TODO: play notes in random order using ArrayList
+			// Use the following method to generate random numbers
+			// int randomNum = ThreadLocalRandom.current().nextInt(rndmList.size());
+			rest(1000);
+			ArrayList<String> rndmList = new ArrayList<>();
+			  rndmList.add("5C");
+			  rndmList.add("5D");
+			  rndmList.add("5E");
+			  rndmList.add("5F");
+			  rndmList.add("5G");
+			  rndmList.add("5A");
+			  rndmList.add("5B");
+			  rndmList.add("6D");
+			  
+			  
+			
+			 int numOfNotes = rndmList.size();
+		        for (int i = 0; i < numOfNotes; i++) {
+		            int randomIndex = ThreadLocalRandom.current().nextInt(rndmList.size());
+		            String randomNote = rndmList.get(randomIndex);
+		            play(randomNote, 800);
+		            rndmList.remove(randomIndex);
+		            rest(200);
+		        }
+		        
+		       
+			
+			
+
+			/////////////////
+			
+			// * finish up
+			synth.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Plays the given note for the given duration
+	 */
+	private static void play(String note, int duration) throws InterruptedException {
+		// * start playing a note
+		channels[0].noteOn(id(note), VOLUME);
+		// * wait
+		Thread.sleep(duration);
+		// * stop playing a note
+		channels[0].noteOff(id(note));
+	}
+
+	/**
+	 * Plays nothing for the given duration
+	 */
+	private static void rest(int duration) throws InterruptedException {
+		Thread.sleep(duration);
+	}
+
+	/**
+	 * Returns the MIDI id for a given note: eg. 4C -> 60
+	 * 
+	 * @return
+	 */
+	private static int id(String note) {
+		int octave = Integer.parseInt(note.substring(0, 1));
+		return notes.indexOf(note.substring(1)) + 12 * octave + 12;
+	}
+}
